@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package GoodreadAuthor;
+
+service AuthorService {
+  rpc GetAuthors(GetAuthorByIdsRequest) returns (Authors) {};
+}
+
+message Author {
+  string author_id = 1;
+  string name = 2;
+  float  average_rating = 3;
+}
+
+message Authors {
+  repeated Author authors = 1;
+}
+
+message GetAuthorByIdsRequest {
+  repeated string author_ids = 1;
+}
+

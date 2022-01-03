@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package GoodreadBook;
+
+service BookService {
+  rpc GetBooks(GetBookByIdsRequest) returns (BookList) {};
+  rpc GetBooksByAuthor(GetBookByAuthorIdsRequest) returns (BookList) {};
+}
+
+message AuthorBook {
+  string author_id = 1;
+  string role = 2;
+}
+
+message Book {
+  string book_id = 1;
+  string title = 2;
+  string description = 3;
+  string isbn = 4;
+  string asin = 5;
+  string link = 6;
+
+  repeated AuthorBook authors = 7;
+  repeated string similar_books = 8;
+  float  average_rating = 9;
+}
+
+message BookList {
+  repeated Book books = 1;
+}
+
+message GetBookByIdsRequest {
+  repeated string book_ids = 1;
+}
+
+
+message GetBookByAuthorIdsRequest {
+  repeated string author_ids = 1;
+}
