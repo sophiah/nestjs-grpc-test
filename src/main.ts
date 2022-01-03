@@ -4,8 +4,11 @@ import { join } from 'path';
 import { AppModule } from './app.module';
 import { GOODREAD_AUTHOR_PACKAGE_NAME } from './dto/author';
 import { GOODREAD_BOOK_PACKAGE_NAME } from './dto/book';
+import otelSDK from './tracer';
 
 async function bootstrap() {
+  await otelSDK.start();
+  
   const app = await NestFactory.create(AppModule);
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.GRPC,
