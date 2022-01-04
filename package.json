@@ -7,8 +7,9 @@
   "license": "UNLICENSED",
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "npm run build:resource && nest build",
+    "build": "nest build",
     "build:resource": "protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto --proto_path=src/grpc/ src/grpc/*.proto --ts_proto_out=src/dto --ts_proto_opt=nestJs=true --ts_proto_opt=lowerCaseServiceMethods=false ",
+    "clean": "rimraf dist",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",

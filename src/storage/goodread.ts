@@ -11,7 +11,7 @@ import BookModel, {
   BOOK_COLLECTION,
 } from './schema/BookModel';
 
-const COODREAD_CONN_STR = process.env['COODREAD_CONNSTR'];
+const COODREAD_CONN_STR = process.env['GOODREAD_CONNSTR'];
 
 export class GoodReadRepository {
   constructor(
