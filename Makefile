@@ -1,5 +1,3 @@
-docker-buildl:
-	docker build -t nest-grpc-test .
 
 docker-build-dev:
 	docker build -t nest-grpc-dev -f dockerfile-dev .

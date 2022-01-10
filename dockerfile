@@ -4,13 +4,14 @@ WORKDIR  /pkg
 ENV GOODREAD_CONNSTR=""
 ENV OTLP_ENDPOINT=""
 
-COPY     package.json /pkg/
-COPY     . .
+COPY  package.json /pkg/
+COPY  . .
 RUN   npm i -g rimraf @nestjs/cli
-RUN   rm -rf data .npmrc Dockerfile* .git \
-      && npm run clean \
+RUN   rm -rf data .npmrc Dockerfile* .git
+RUN   npm install && npm run clean \
       && npm run build \
-      && npm install --no-optional 
+      && npm install --no-optional
+
 # removes all packages specified in the devDependencies section.
 RUN      npm prune --production 
 
