@@ -1,7 +1,7 @@
 FROM     node:14.18.2 as builder
 WORKDIR  /app
 
-ENV COODREAD_CONNSTR=""
+ENV GOODREAD_CONNSTR=""
 ENV OTLP_ENDPOINT=""
 
 RUN apt-get update && apt-get install telnet
