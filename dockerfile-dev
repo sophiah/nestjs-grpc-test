@@ -6,6 +6,8 @@ ENV OTLP_ENDPOINT=""
 
 COPY  package.json /app
 COPY  nest-cli.json /app
+COPY  tsconfig.build.json /app
+COPY  tsconfig.json /app
 
 COPY  src/ /app/src
 
