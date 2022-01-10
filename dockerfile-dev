@@ -1,0 +1,13 @@
+FROM     node:14.18.2 as builder
+WORKDIR  /app
+
+ENV COODREAD_CONNSTR=""
+ENV OTLP_ENDPOINT=""
+
+COPY  package.json /app
+COPY  nest-cli.json /app
+
+COPY  src/ /app/src
+
+EXPOSE   8082
+CMD      ["tail", "-f", "/dev/null"]
