@@ -3,6 +3,7 @@ WORKDIR  /app
 
 ENV GOODREAD_CONNSTR=""
 ENV OTLP_ENDPOINT=""
+ENV enableTracing=""
 
 RUN apt-get update && apt-get install telnet
 

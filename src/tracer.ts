@@ -38,6 +38,9 @@ const _config: Partial<NodeSDKConfiguration> = {
 };
 
 _config.instrumentations = [new GrpcInstrumentation()];
+if (process.env.enableTracing) {
+  _config.instrumentations = _config.instrumentations.push(getNodeAutoInstrumentations())
+}
 
 const otelSDK = new NodeSDK(_config);
 
