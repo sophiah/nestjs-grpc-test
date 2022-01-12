@@ -9,4 +9,4 @@ docker-build-dev:
 		nest-grpc-dev
 
 docker-build:
-	docker build -t nest-gql-test .
+	docker build -t nest-grpc-test .
