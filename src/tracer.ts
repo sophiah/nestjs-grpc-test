@@ -37,9 +37,12 @@ const _config: Partial<NodeSDKConfiguration> = {
   contextManager: new AsyncLocalStorageContextManager(),
 };
 
-_config.instrumentations = [new GrpcInstrumentation()];
+
 if (process.env.enableTracing) {
-  _config.instrumentations = _config.instrumentations.push(getNodeAutoInstrumentations())
+  _config.instrumentations = [new GrpcInstrumentation(), getNodeAutoInstrumentations()]
+}
+else {
+  _config.instrumentations = [new GrpcInstrumentation()];
 }
 
 const otelSDK = new NodeSDK(_config);
