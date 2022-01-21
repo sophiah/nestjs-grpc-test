@@ -1,21 +1,36 @@
 import { NodeSDK, NodeSDKConfiguration } from '@opentelemetry/sdk-node';
 import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks';
 import * as process from 'process';
-import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
 import { Resource } from '@opentelemetry/resources';
 import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
-import { CollectorTraceExporter } from '@opentelemetry/exporter-collector-grpc';
 import { GrpcInstrumentation } from '@opentelemetry/instrumentation-grpc';
+import { ConsoleMetricExporter } from '@opentelemetry/sdk-metrics-base';
 
-const traceCollectorOptions = {
-  url: process.env['OTLP_ENDPOINT'] || 'grpc://localhost:4317',
-};
+// import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
+// import { CollectorTraceExporter } from '@opentelemetry/exporter-collector-grpc';
+// const traceCollectorOptions = {
+//   url: process.env['OTLP_ENDPOINT'] || 'grpc://localhost:4317',
+// };
+// const spanExporter = new BatchSpanProcessor(
+//   new CollectorTraceExporter(traceCollectorOptions),
+// );
+
+import {
+  ConsoleSpanExporter,
+  SimpleSpanProcessor,
+  BatchSpanProcessor,
+} from '@opentelemetry/sdk-trace-base';
+import { SpanPrometheusExporter } from './opentelemetry';
 const spanExporter = new BatchSpanProcessor(
-  new CollectorTraceExporter(traceCollectorOptions),
+  new SpanPrometheusExporter({
+    service: 'test-grpc',
+    port: 9000,
+  }),
 );
 
-// import { ConsoleSpanExporter, SimpleSpanProcessor } from '@opentelemetry/sdk-trace-base';
-// const spanExporter = new SimpleSpanProcessor(new ConsoleSpanExporter());
+// turn on the debug mode
+// import { diag, DiagConsoleLogger, DiagLogLevel } from '@opentelemetry/api';
+// diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG);
 
 const _config: Partial<NodeSDKConfiguration> = {
   resource: new Resource({

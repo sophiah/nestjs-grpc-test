@@ -6,7 +6,6 @@ import { StatusController } from './status/status.controller';
 import { GoodReadRepository } from './storage/goodread';
 
 @Module({
-  imports: [],
   controllers: [StatusController, AuthorController, BookController],
   providers: [GoodReadRepository, GoodreadService],
 })

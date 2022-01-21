@@ -15,6 +15,7 @@ import { GoodreadService } from './goodread.service';
 @AuthorServiceControllerMethods()
 export class AuthorController implements AuthorServiceController {
   constructor(private goodreadService: GoodreadService) {}
+
   GetAuthors(
     request: GetAuthorByIdsRequest,
   ): Authors | Promise<Authors> | Observable<Authors> {
