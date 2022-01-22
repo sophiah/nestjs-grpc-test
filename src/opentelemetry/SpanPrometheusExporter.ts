@@ -95,21 +95,6 @@ export class SpanPrometheusExporter implements SpanExporter {
   }
 
   /**
-   * converts span info into more readable format
-   * @param span
-   */
-  private _exportInfo(span: ReadableSpan) {
-    return {
-      name: span.name,
-      timestamp: hrTimeToMicroseconds(span.startTime),
-      duration: hrTimeToMicroseconds(span.duration),
-      attributes: span.attributes,
-      status: span.status,
-      events: span.events,
-    };
-  }
-
-  /**
    * Saves the current values of all exported so that
    * they can be pulled by the Prometheus backend.
    *
@@ -132,10 +117,7 @@ export class SpanPrometheusExporter implements SpanExporter {
 
     diag.debug('Prometheus exporter export');
 
-    for (const span of spans) {
-      this._batcher.process(span);
-      // console.log(this._exportInfo(span));
-    }
+    this._batcher.process(spans);
 
     cb({ code: ExportResultCode.SUCCESS });
   }
