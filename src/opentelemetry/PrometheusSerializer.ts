@@ -18,7 +18,6 @@ import {
   AggregatorKind,
   MetricKind,
 } from '@opentelemetry/sdk-metrics-base';
-import { PrometheusCheckpoint } from './types';
 import { Attributes } from '@opentelemetry/api-metrics';
 import { hrTimeToMilliseconds } from '@opentelemetry/core';
 
@@ -168,17 +167,17 @@ export class PrometheusSerializer {
     this._appendTimestamp = appendTimestamp;
   }
 
-  serialize(checkpointSet: PrometheusCheckpoint[]): string {
+  serialize(metricRecords: MetricRecord[]): string {
     let str = '';
-    for (const checkpoint of checkpointSet) {
-      str += this.serializeCheckpointSet(checkpoint) + '\n';
+    for (const metricRecord of metricRecords) {
+      str += this.serializeCheckpointSet(metricRecord) + '\n';
     }
     return str;
   }
 
-  serializeCheckpointSet(checkpoint: PrometheusCheckpoint): string {
+  serializeCheckpointSet(metricRecord: MetricRecord): string {
     let name = sanitizePrometheusMetricName(
-      escapeString(checkpoint.descriptor.name),
+      escapeString(metricRecord.descriptor.name),
     );
     if (this._prefix) {
       name = `${this._prefix}${name}`;
@@ -186,29 +185,27 @@ export class PrometheusSerializer {
 
     name = enforcePrometheusNamingConvention(
       name,
-      checkpoint.descriptor.metricKind,
+      metricRecord.descriptor.metricKind,
     );
 
     const help = `# HELP ${name} ${escapeString(
-      checkpoint.descriptor.description || 'description missing',
+      metricRecord.descriptor.description || 'description missing',
     )}`;
     const type = `# TYPE ${name} ${toPrometheusType(
-      checkpoint.descriptor.metricKind,
-      checkpoint.aggregatorKind,
+      metricRecord.descriptor.metricKind,
+      metricRecord.aggregator.kind,
     )}`;
 
-    const results = checkpoint.records
-      .map((it) => this.serializeRecord(name, it))
-      .join('');
+    const results = this.serializeRecord(metricRecord);
 
     return `${help}\n${type}\n${results}`.trim();
   }
 
-  serializeRecord(name: string, record: MetricRecord): string {
+  serializeRecord(record: MetricRecord): string {
     let results = '';
 
-    name = enforcePrometheusNamingConvention(
-      name,
+    const _name = enforcePrometheusNamingConvention(
+      record.descriptor.name,
       record.descriptor.metricKind,
     );
 
@@ -218,7 +215,7 @@ export class PrometheusSerializer {
         const { value, timestamp: hrtime } = record.aggregator.toPoint();
         const timestamp = hrTimeToMilliseconds(hrtime);
         results += stringify(
-          name,
+          _name,
           record.attributes,
           value,
           this._appendTimestamp ? timestamp : undefined,
@@ -232,7 +229,7 @@ export class PrometheusSerializer {
         /** Histogram["bucket"] is not typed with `number` */
         for (const key of ['count', 'sum'] as ('count' | 'sum')[]) {
           results += stringify(
-            name + '_' + key,
+            _name + '_' + key,
             record.attributes,
             value[key],
             this._appendTimestamp ? timestamp : undefined,
@@ -259,7 +256,7 @@ export class PrometheusSerializer {
             infiniteBoundaryDefined = true;
           }
           results += stringify(
-            name + '_bucket',
+            _name + '_bucket',
             record.attributes,
             cumulativeSum,
             this._appendTimestamp ? timestamp : undefined,

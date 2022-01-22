@@ -117,7 +117,7 @@ export class SpanPrometheusExporter implements SpanExporter {
 
     diag.debug('Prometheus exporter export');
 
-    this._batcher.process(spans);
+    this._batcher.processSpan(spans);
 
     cb({ code: ExportResultCode.SUCCESS });
   }
