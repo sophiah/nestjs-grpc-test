@@ -1,5 +1,4 @@
-locust==2.5.1
-grpcio==1.31.0
-grpcio-tools==1.31.0
-gevent==20.9.0
-Jinja2==2.11.3
+locust
+grpcio
+grpcio-tools
+gevent

@@ -1,3 +1,5 @@
+from curses import meta
+from importlib.metadata import metadata
 import time
 import uuid
 
@@ -7,20 +9,23 @@ from locust import User
 from locust import TaskSet
 
 from protos.author_pb2_grpc import AuthorServiceStub
-from protos import author_pb2
+from protos.book_pb2_grpc import BookServiceStub
+from protos import author_pb2, book_pb2
 
 class AuthorServiceClient:
     GetAuthorByIdsRequest = author_pb2.GetAuthorByIdsRequest
 
     def __init__(self) -> None:
-        self.host = "localhost:18082"
+        self.host = "localhost:8082"
         self.channel = grpc.insecure_channel(self.host)
     
     def get_authors(self, request: author_pb2.GetAuthorByIdsRequest) -> author_pb2.Authors:
         stub = AuthorServiceStub(self.channel).GetAuthors
-        resp, call = stub.with_call(request=request, metadata=self.get_grpc_metadata())
-        # print(call)
-        # print(resp)
+        stub.with_call(request=request, metadata=self.get_grpc_metadata())
+    
+    def get_books(self, request: book_pb2.GetBookByIdsRequest) -> book_pb2.Book:
+        stub = BookServiceStub(self.channel).GetBooks
+        stub.with_call(request=request)
 
     @staticmethod
     def get_grpc_metadata():
@@ -39,9 +44,14 @@ class PerfTaskSet(TaskSet):
         pass
 
     @task
-    def say_hello(self):
-        req_data = author_pb2.GetAuthorByIdsRequest(author_ids=['1077326'])
+    def getAuthorByIds(self):
+        req_data = author_pb2.GetAuthorByIdsRequest(author_ids=['1077326', '4506759', '8328883'])
         self.locust_request_handler("GetAuthorByIdsRequest", req_data)
+
+    @task
+    def getBookIds(self):
+        req_data = book_pb2.GetBookByIdsRequest(book_ids=['30556550', '34727935', '33876465'])
+        self.locust_request_handler("GetBookIds", req_data)
 
     def locust_request_handler(self, grpc_name, req_data):
         req_func = self._get_request_function(grpc_name)
@@ -62,6 +72,7 @@ class PerfTaskSet(TaskSet):
     def _get_request_function(self, grpc_name):
         req_func_map = {
             "GetAuthorByIdsRequest": self.client.get_authors,
+            "GetBookIds": self.client.get_books,
         }
         if grpc_name not in req_func_map:
             raise ValueError(f"gRPC name not supported [{grpc_name}]")

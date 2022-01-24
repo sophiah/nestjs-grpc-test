@@ -26,7 +26,7 @@ export class PrometheusAttributesBatcher {
   constructor(service: string, histogramBoundries: number[]) {
     this._service = service;
     this._histogramBoundries = histogramBoundries;
-    this._processor = new CustomUngroupedProcessor();
+    this._processor = new UngroupedProcessor();
     this._processor.aggregatorFor({
       name: 'duration',
       description: 'execution duration',
@@ -79,14 +79,5 @@ export class PrometheusAttributesBatcher {
 
   checkPointSet(): MetricRecord[] {
     return this._processor.checkPointSet();
-  }
-}
-
-class CustomUngroupedProcessor extends UngroupedProcessor {
-  process(record: MetricRecord) {
-    const attributes = Object.keys(record.attributes)
-      .map((k) => `${k}=${record.attributes[k]}`)
-      .join(',');
-    this._batchMap.set(record.descriptor.name + attributes, record);
   }
 }
