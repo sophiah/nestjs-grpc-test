@@ -3,7 +3,8 @@ WORKDIR  /pkg
 
 ENV GOODREAD_CONNSTR=""
 ENV OTLP_ENDPOINT=""
-ENV enableTracing=""
+ENV SPAN_EXPORTER=""
+ENV AUTO_INTROMENT=""
 
 COPY  package.json /pkg/
 COPY  . .
