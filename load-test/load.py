@@ -45,10 +45,11 @@ class PerfTaskSet(TaskSet):
 
     @task
     def getAuthorByIds(self):
-        req_data = author_pb2.GetAuthorByIdsRequest(author_ids=['1077326', '4506759', '8328883'])
+        # req_data = author_pb2.GetAuthorByIdsRequest(author_ids=['1077326', '4506759', '8328883'])
+        req_data = author_pb2.GetAuthorByIdsRequest(author_ids=['1077326'])
         self.locust_request_handler("GetAuthorByIdsRequest", req_data)
 
-    @task
+    # @task
     def getBookIds(self):
         req_data = book_pb2.GetBookByIdsRequest(book_ids=['30556550', '34727935', '33876465'])
         self.locust_request_handler("GetBookIds", req_data)
@@ -72,7 +73,7 @@ class PerfTaskSet(TaskSet):
     def _get_request_function(self, grpc_name):
         req_func_map = {
             "GetAuthorByIdsRequest": self.client.get_authors,
-            "GetBookIds": self.client.get_books,
+            # "GetBookIds": self.client.get_books,
         }
         if grpc_name not in req_func_map:
             raise ValueError(f"gRPC name not supported [{grpc_name}]")

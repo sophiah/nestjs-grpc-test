@@ -4,29 +4,27 @@ import * as process from 'process';
 import { Resource } from '@opentelemetry/resources';
 import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
 import { GrpcInstrumentation } from '@opentelemetry/instrumentation-grpc';
-import { ConsoleMetricExporter } from '@opentelemetry/sdk-metrics-base';
-
-// import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
-// import { CollectorTraceExporter } from '@opentelemetry/exporter-collector-grpc';
-// const traceCollectorOptions = {
-//   url: process.env['OTLP_ENDPOINT'] || 'grpc://localhost:4317',
-// };
-// const spanExporter = new BatchSpanProcessor(
-//   new CollectorTraceExporter(traceCollectorOptions),
-// );
-
-import {
-  ConsoleSpanExporter,
-  SimpleSpanProcessor,
-  BatchSpanProcessor,
-} from '@opentelemetry/sdk-trace-base';
+import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
+import { CollectorTraceExporter } from '@opentelemetry/exporter-collector-grpc';
 import { SpanPrometheusExporter } from './opentelemetry';
-const spanExporter = new BatchSpanProcessor(
-  new SpanPrometheusExporter({
-    service: 'test-grpc',
-    port: 9000,
-  }),
-);
+
+let spanExporter;
+
+if (process.env['SPAN_EXPORTER'] == 'OLTP') {
+  const traceCollectorOptions = {
+    url: process.env['OTLP_ENDPOINT'] || 'grpc://localhost:4317',
+  };
+  spanExporter = new BatchSpanProcessor(
+    new CollectorTraceExporter(traceCollectorOptions),
+  );
+} else {
+  spanExporter = new BatchSpanProcessor(
+    new SpanPrometheusExporter({
+      service: 'test-grpc',
+      port: 9001,
+    }),
+  );
+}
 
 // turn on the debug mode
 // import { diag, DiagConsoleLogger, DiagLogLevel } from '@opentelemetry/api';
