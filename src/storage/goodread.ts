@@ -11,14 +11,21 @@ import BookModel, {
   BOOK_COLLECTION,
 } from './schema/BookModel';
 
-const COODREAD_CONN_STR = process.env['GOODREAD_CONNSTR'];
+const GOODREAD_CONN_STR = process.env['GOODREAD_CONNSTR'];
+const GOODREAD_DB = process.env['GOODREAD_DB'] || 'goodread';
 
 export class GoodReadRepository {
   constructor(
     private readonly mongoseConn: Connection = mongoose.createConnection(
-      COODREAD_CONN_STR,
+      GOODREAD_CONN_STR,
+      {
+        user: process.env['GOODREAD_USR'],
+        pass: process.env['GOODREAD_PWD'],
+      },
     ),
-  ) {}
+  ) {
+    this.mongoseConn = this.mongoseConn.useDb(GOODREAD_DB);
+  }
 
   private async getModel<T extends Document>(
     name: string,
